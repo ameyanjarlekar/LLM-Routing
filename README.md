@@ -7,6 +7,8 @@ This repository contains two related but distinct workflows:
 
 The experiment suite does not load the real-model dataset. It simulates its own contexts, model costs, and user feedback; results from it should not be described as measurements of the five APIs used in the data-collection pipeline.
 
+For the configurable command-line workflow, use the copies in `src/` and see [src/README.md](src/README.md). The sections below describe the original root-level pipeline and the independent synthetic experiments.
+
 ## 1. Real-Model Data and Routing POC
 
 ### Workflow
@@ -95,7 +97,9 @@ Query Num/ID    | Model Quality Vector / Scores
 0               | [0.8, 0.9, 0.7, 0.8, 0.9, 1.0]
 ```
 
-### Step 3: Run the contextual routing POC
+### Step 3: Run the original contextual routing POC
+
+This section applies to the original root-level `compare_llms.py`. The configurable copy under `src/` avoids its machine-specific data path and accepts the model list and compute costs at runtime; see [src/README.md](src/README.md).
 
 Before running `compare_llms.py`, check `DATA_DIR` near the top of the script. It currently points to `/home/ameya-anjarlekar/llm-routing-poc/llm_routing_poc_data`, which may not be this repository's output directory. Change it to the directory containing `parsed_quality_vectors.txt` on your machine. Then run:
 
@@ -112,6 +116,18 @@ The comparator normalizes a raw vector `q` to `x = q / sqrt(6)`, ensuring the co
 The POC uses the five candidate models as its action set, with costs proportional to parameter counts `[120, 284, 35, 30.7, 27]` billion and normalized by the largest count. It sets `epsilon = 0.20`, `delta = 0.05`, regularization `beta = 1.0`, confidence parameter `zeta = 2.5`, empirical alpha scale `0.005`, and reference `rho = 0.15` at horizon 100. The reference `eta` is `0.5`; note that `compute_eta()` currently returns this constant regardless of epsilon. The script's header describes the five real models as the complete action set with no fallback.
 
 The default replay results are written to `llm_routing_poc_data/poc_results/poc_default_trials.csv`. The epsilon sweep uses `[0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40]` and writes `poc_epsilon_sweep.csv`; the script also saves `poc_cost_vs_epsilon.png`, `poc_satisfaction_vs_epsilon.png`, `poc_model_selection_vs_epsilon.png`, and `poc_config.json` in `poc_results/`. Results report average cost, average simulated satisfaction, the fraction of replay trials meeting the satisfaction target, and model-use frequencies.
+
+### Configurable Shell Workflow
+
+The isolated, configurable copies live in `src/`; the original scripts in the repository root are unchanged. Detailed file descriptions, requirements, argument validation, and output schemas are in [src/README.md](src/README.md). Activate the project environment and invoke the shell runner as follows:
+
+```bash
+conda activate llm_routing
+cd src
+./run_routing.sh 100 "model-a,model-b" "120,80"
+```
+
+The arguments are `T`, an ordered comma-separated list of model IDs, and one positive compute value per model in the same order. For each prompt, the runner gets answers from all listed models, judges those answers, exports the accumulated vectors, then performs one online algorithm step before proceeding to the next prompt. Compute values are normalized by their maximum to become action costs. The online step uses the selected model's judge-threshold `Y`, while the existing epsilon sweep is run retrospectively after prompt `T` and does not affect online decisions. Set `LUMEN_API_KEY` before running. Outputs are under `src/llm_routing_poc_data/`: `responses.jsonl`, `routing_dataset.jsonl`, `summary.csv`, `parsed_quality_vectors.txt`, `poc_results/poc_streaming_steps.csv`, and the standard POC CSV, PNG, and JSON artifacts. If a candidate call still fails after retries, the run stops at that prompt; rerun it to retry rather than routing misaligned rows.
 
 ## 2. Synthetic Experiment Suite (`run_experiments.py`)
 

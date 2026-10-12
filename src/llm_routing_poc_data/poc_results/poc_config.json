@@ -1,0 +1,33 @@
+{
+  "models": [
+    "qwen3.6-35b-a3b",
+    "gemma-4-31b-it"
+  ],
+  "compute_values": [
+    35.0,
+    30.7
+  ],
+  "costs": [
+    1.0,
+    0.8771428571428571
+  ],
+  "D": 6,
+  "epsilon": 0.2,
+  "delta": 0.05,
+  "T": 2,
+  "N_TRIALS": 100,
+  "eta_reference": 0.5,
+  "rho_reference": 0.15,
+  "T_reference": 100,
+  "alpha_scale": 0.005,
+  "beta": 1.0,
+  "satisfaction_feedback": "judge threshold for the selected model",
+  "context_normalization": "x = raw_quality_vector / sqrt(D)",
+  "routing_order": "sequential prompt order",
+  "fallback": false,
+  "main_figures": [
+    "poc_cost_vs_epsilon.png",
+    "poc_satisfaction_vs_epsilon.png",
+    "poc_model_selection_vs_epsilon.png"
+  ]
+}
