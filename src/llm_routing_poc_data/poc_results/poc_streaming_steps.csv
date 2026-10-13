@@ -1,3 +1,0 @@
-step,query_id,selected_action,selected_model,observed_satisfaction,selected_model_compute,normalized_cost,lambda,ucb_qwen3.6-35b-a3b,ucb_gemma-4-31b-it
-1,0,1,gemma-4-31b-it,1,30.7,0.8771428571428571,0.4303300858899106,0.0,0.008656464650124731
-2,1,1,gemma-4-31b-it,0,30.7,0.8771428571428571,1.3606601717798212,0.0,0.32640052313883944

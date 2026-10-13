@@ -1,3 +1,0 @@
-model,n,mean_correctness,mean_relevance,mean_completeness,mean_clarity,mean_instruction_following,mean_safety,mean_satisfaction,satisfaction_rate
-qwen3.6-35b-a3b,2,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-gemma-4-31b-it,2,0.6,0.85,0.725,0.8999999999999999,0.8,1.0,0.625,0.5
